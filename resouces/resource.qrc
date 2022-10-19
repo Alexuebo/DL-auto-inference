@@ -1,0 +1,9 @@
+<RCC>
+  <qresource prefix="images">
+    <file>images/CT_Pne.png</file>
+    <file>images/CT_Renal.png</file>
+  </qresource>
+  <qresource prefix="css">
+    <file>css/pic.css</file>
+  </qresource>
+</RCC>

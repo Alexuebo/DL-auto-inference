@@ -1,0 +1,63 @@
+* {
+    outline: none; /* 去掉有焦点时的虚线 */
+}
+
+QDialog {
+    background: #D6DBE9; /* 对话框背景色 */
+}
+
+QLabel {
+    border: 0px solid #298DFF; /* 无边框 */
+    border-radius: 3px; /* 边框圆角 */
+    background-color: #F2F2F2; /* 背景颜色 */
+    color: #000112; /* 文本颜色 */
+    font-family: "Microsoft YaHei"; /* 文本字体族 */
+    font-size: 11pt; /* 文本字体大小 */
+    transition: all 0.3s;
+    background-image: url(../images/CT_Renal.png);
+}
+
+QLabel:disabled { /* QLabel在禁用时的状态 */
+    border: 1px solid #B4B4B4;
+    background-color: #CDCDCD;
+    color: #B4B4B4;
+}
+
+QLabel:hover { /* QLabel鼠标悬停状态 */
+    transform: scale(1.1);
+}
+
+/*QLabel#PaddingLabel { !* 定义有Padding的QLabel，PaddingLabel为对象名，在QSS中为特定对象定制样式 *!*/
+/*    padding-left: 10px; !* 文本距离左边界有10px *!*/
+/*}*/
+
+/*QLabel#ImageLabel { !* 定义有背景图片的QLabel，ImageLabel为对象名，在QSS中为特定对象定制样式 *!*/
+/*    border-image: url(":/Resource/original"); !* 使用border-image可以自适应QLabel大小 *!*/
+/*    background-color: transparent; !* 不需要背景时可设为透明 *!*/
+/*}*/
+
+/*本来想设置图片的  没有用*/
+QLabel#label_1 {
+    border-image: url(../images/CT_Renal.png);
+}
+
+QLabel#label_2 {
+    border-image: url(../images/CT_Pne.png);
+}
+
+
+/*div {*/
+/*    overflow: hidden;*/
+/*    float: left;*/
+/*    margin: 100px;*/
+
+/*}*/
+
+/*div img {*/
+/*    transition: all .4s;*/
+/*}*/
+
+/*div img:hover {*/
+/*    transform: scale(1.1);*/
+/*    cursor: pointer;*/
+/*}*/
