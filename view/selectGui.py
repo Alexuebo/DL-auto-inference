@@ -3,7 +3,7 @@ from functools import partial
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QWidget
 
-from tools import Utils
+from utils import tools
 from ui.select import Ui_select
 
 Model_Num = 6
@@ -17,7 +17,7 @@ class SelectGui(QWidget, Ui_select):
     def __init__(self, top_window):
         super().__init__()
         self.setupUi(top_window)
-        self.style = Utils.readfile(stylecss)
+        self.style = tools.readfile(stylecss)
         self.addslots()
         # self.label_1.setStyleSheet("background-image: url(../resouces/images/CT_Renal.png);") #这样设图片会导致后续css失效
 

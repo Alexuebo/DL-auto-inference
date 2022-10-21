@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>887</width>
-    <height>626</height>
+    <width>627</width>
+    <height>474</height>
    </rect>
   </property>
   <property name="font">
@@ -31,13 +31,7 @@
          <number>5</number>
         </property>
         <item>
-         <widget class="QGraphicsView" name="view_image">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
+         <widget class="QGraphicsView" name="image_view">
           <property name="minimumSize">
            <size>
             <width>300</width>
@@ -47,28 +41,23 @@
          </widget>
         </item>
         <item>
-         <widget class="QGraphicsView" name="view_pred_image">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
+         <widget class="QGraphicsView" name="infer_view">
           <property name="minimumSize">
            <size>
             <width>300</width>
             <height>300</height>
            </size>
           </property>
-          <property name="cursor" stdset="0">
-           <cursorShape>ArrowCursor</cursorShape>
-          </property>
-          <property name="focusPolicy">
-           <enum>Qt::StrongFocus</enum>
-          </property>
          </widget>
         </item>
        </layout>
+      </item>
+      <item>
+       <widget class="QProgressBar" name="progressBar">
+        <property name="value">
+         <number>50</number>
+        </property>
+       </widget>
       </item>
       <item>
        <layout class="QHBoxLayout" name="blowLayout">
@@ -577,7 +566,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>887</width>
+     <width>627</width>
      <height>22</height>
     </rect>
    </property>
@@ -685,8 +674,6 @@
   </action>
  </widget>
  <tabstops>
-  <tabstop>view_image</tabstop>
-  <tabstop>view_pred_image</tabstop>
   <tabstop>log_data</tabstop>
   <tabstop>btn_predict</tabstop>
   <tabstop>btn_save</tabstop>

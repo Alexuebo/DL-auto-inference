@@ -10,11 +10,13 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+from view.Base.ImageView import ImageView
+
 
 class Ui_main(object):
     def setupUi(self, main):
         main.setObjectName("main")
-        main.resize(1003, 653)
+        main.resize(892, 675)
         font = QtGui.QFont()
         font.setFamily("苹方-简")
         font.setPointSize(10)
@@ -30,27 +32,19 @@ class Ui_main(object):
         self.ImageLayout = QtWidgets.QHBoxLayout()
         self.ImageLayout.setSpacing(5)
         self.ImageLayout.setObjectName("ImageLayout")
-        self.view_image = QtWidgets.QGraphicsView(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.view_image.sizePolicy().hasHeightForWidth())
-        self.view_image.setSizePolicy(sizePolicy)
-        self.view_image.setMinimumSize(QtCore.QSize(300, 300))
-        self.view_image.setObjectName("view_image")
-        self.ImageLayout.addWidget(self.view_image)
-        self.view_pred_image = QtWidgets.QGraphicsView(self.centralwidget)
-        sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.view_pred_image.sizePolicy().hasHeightForWidth())
-        self.view_pred_image.setSizePolicy(sizePolicy)
-        self.view_pred_image.setMinimumSize(QtCore.QSize(300, 300))
-        self.view_pred_image.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.ArrowCursor))
-        self.view_pred_image.setFocusPolicy(QtCore.Qt.StrongFocus)
-        self.view_pred_image.setObjectName("view_pred_image")
-        self.ImageLayout.addWidget(self.view_pred_image)
+        self.image_view = ImageView(self.centralwidget)
+        self.image_view.setMinimumSize(QtCore.QSize(300, 300))
+        self.image_view.setObjectName("image_view")
+        self.ImageLayout.addWidget(self.image_view)
+        self.infer_view = ImageView(self.centralwidget)
+        self.infer_view.setMinimumSize(QtCore.QSize(300, 300))
+        self.infer_view.setObjectName("infer_view")
+        self.ImageLayout.addWidget(self.infer_view)
         self.verticalLayout.addLayout(self.ImageLayout)
+        self.progressBar = QtWidgets.QProgressBar(self.centralwidget)
+        self.progressBar.setProperty("value", 50)
+        self.progressBar.setObjectName("progressBar")
+        self.verticalLayout.addWidget(self.progressBar)
         self.blowLayout = QtWidgets.QHBoxLayout()
         self.blowLayout.setObjectName("blowLayout")
         self.log_label = QtWidgets.QLabel(self.centralwidget)
@@ -229,7 +223,7 @@ class Ui_main(object):
         self.verticalLayout_2.addLayout(self.verticalLayout)
         main.setCentralWidget(self.centralwidget)
         self.menubar = QtWidgets.QMenuBar(main)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 887, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 892, 22))
         self.menubar.setObjectName("menubar")
         self.menufile = QtWidgets.QMenu(self.menubar)
         self.menufile.setObjectName("menufile")
@@ -282,8 +276,6 @@ class Ui_main(object):
 
         self.retranslateUi(main)
         QtCore.QMetaObject.connectSlotsByName(main)
-        main.setTabOrder(self.view_image, self.view_pred_image)
-        main.setTabOrder(self.view_pred_image, self.log_data)
         main.setTabOrder(self.log_data, self.btn_predict)
         main.setTabOrder(self.btn_predict, self.btn_save)
 
