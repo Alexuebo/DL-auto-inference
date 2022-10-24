@@ -10,7 +10,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
-from view.Base.PicLabel import PicQLabel
+from view.impl.PicLabel import PicQLabel
 
 
 class Ui_select(object):

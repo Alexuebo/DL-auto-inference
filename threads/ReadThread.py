@@ -20,16 +20,16 @@ class ReadThread(QThread):  # 建立一个任务线程类,这个是读取数据�
         self.typename = name
 
     # 读取单个太慢了，设置读取一整个文件夹,但是这样就没有进度条了
-    def autoprocess(self, filepath, typename):
-        if typename in buildintypes:
-            if typename == "CT肾肿瘤":
-                return niiprocess(filepath, typename)
-            elif typename == "CT气胸":
-                return dcmdirprocess(filepath, typename)
+    def autoprocess(self):
+        if self.typename in buildintypes:
+            if self.typename == "CT肾肿瘤":
+                return niiprocess(self.datapath, self.typename)
+            elif self.typename == "CT气胸":
+                return dcmdirprocess(self.datapath, self.typename)
 
     def run(self):  # 在启动线程后任务从这个函数里面开始执行
         if not self.datapath or not self.typename:
             return
         # 不同类型的自动处理
-        imgs, pt = self.autoprocess(self.datapath, self.typename)
+        imgs, pt = self.autoprocess()
         self.result.emit((imgs, pt))

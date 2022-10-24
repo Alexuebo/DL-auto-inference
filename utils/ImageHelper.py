@@ -2,7 +2,8 @@ import cv2
 import numpy as np
 
 
-# 图像处理-高斯滤波
+# 图像处理-高斯滤波,
+# 这实现太慢了，不如直接用cv2库函数
 def gaussion_filter(img, k_size=5, sigma=0.5):
     if len(img.shape) == 3:
         H, W, C = img.shape
@@ -46,7 +47,7 @@ def mask_extract(image):
 
     # 形态学重建
     SE = cv2.getStructuringElement(shape=cv2.MORPH_CROSS, ksize=(7, 7))
-    while True:
+    while 1:
         marker_pre = marker
         dilation = cv2.dilate(marker, kernel=SE)
         marker = np.min((dilation, mask), axis=0)
@@ -55,3 +56,9 @@ def mask_extract(image):
     dst = 255 - marker
     filling = dst - image
     return filling
+
+
+def imageto3(img):
+    image = np.expand_dims(img, axis=2)
+    image = np.concatenate((image, image, image), axis=-1)
+    return image

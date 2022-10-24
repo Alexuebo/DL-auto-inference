@@ -40,7 +40,7 @@ class ImageView(QGraphicsView):
         # imgs是整个病人，一张张转化为RGB
         for i, img in enumerate(imgs):
             self.process.emit(i)
-            cvimg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # 把opencv 默认BGR转为通用的RGB
+            cvimg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # 把opencv对象 默认BGR转为RGB
             y, x = cvimg.shape[:-1]
             frame = QImage(cvimg, x, y, QImage.Format_RGB888)
             self.images.append(frame)
@@ -55,7 +55,7 @@ class ImageView(QGraphicsView):
 
     def wheelEvent(self, event: QtGui.QWheelEvent) -> None:
         if self.ctrl:
-            # ctrl+鼠标滚轮事件 = 放大
+            #  放大缩小
             self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
             if event.angleDelta().y() > 0:
                 self.scale(1.1, 1.1)
