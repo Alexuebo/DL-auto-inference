@@ -7,7 +7,7 @@ LOG_LINE_NUM = 0
 
 buildintypes = ["CT肾肿瘤", "CT气胸"]
 # X线要调窗宽窗位吗？
-CTwindow = {"CT肾肿瘤": "abdomen", "CT气胸": "lung"}
+CTwindow = {"CT肾肿瘤": "abdomen", "CT气胸": "lung", "肾盂": "RP"}
 
 
 # 打开文件
@@ -71,13 +71,6 @@ def savemasks(item):
     return open_dirs(item, "请选择保存的文件夹")
 
 
-# def msgCritical(item, strInfo):
-#     dlg = QMessageBox(item)
-#     dlg.setIcon(QMessageBox.Critical)
-#     dlg.setText(strInfo)
-#     dlg.show()
-
-
 def modelformat(path):
     result = -1
     path = str(path)
@@ -138,4 +131,7 @@ def get_CT_width_center(window_type):
     elif t == "abdomen":
         center = 40
         width = 400
+    elif t == "RP":
+        center = 30
+        width = 250
     return center, width

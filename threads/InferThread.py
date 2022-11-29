@@ -27,7 +27,7 @@ class InferThread(QThread):
         self.signal.emit(3)  # 第三部，后处理
         self.result = self.pi.postprocess(infermask)
 
-        self.signal.emit(4)  # 第四步，计算体积
+        self.signal.emit(4)  # 第四步，计算其他的东西
         others = self.pi.getothers(self.result)
 
         self.signal.emit(5)  # 提交,一般是这5步骤

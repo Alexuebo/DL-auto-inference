@@ -1,11 +1,10 @@
 '''
-建造者模式的Builder
+建造者模式的Builder，用于构造各种具体的推理逻辑类
 '''
 from model.CT_PNE.PneInfer import PneInfer
 from model.CT_PNE.PnePostprocess import PnePostprocess
 from model.CT_Renal.RCCInfer import RCCInfer
 from model.CT_Renal.RCCPostprocess import RCCPostprocess
-from utils.tools import alertmsg
 
 classtype = {"CT气胸": "PneInfer",
              "CT肾肿瘤": "RCCInfer"}
@@ -22,6 +21,7 @@ class BaseBuilder:
         else:
             return -1
 
+    # todo 有没有设计模式能根据用户输入自动创建对象的。。是不是到最后还是要写if判断？
     def buildinfer(self, img_data, model_data):
         clazz = classtype.get(self.typename)
         if clazz == "PneInfer":

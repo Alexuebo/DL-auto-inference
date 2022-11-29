@@ -58,7 +58,81 @@ def mask_extract(image):
     return filling
 
 
-def imageto3(img):
-    image = np.expand_dims(img, axis=2)
+def imageto3(array):
+    image = np.expand_dims(array, axis=2)
     image = np.concatenate((image, image, image), axis=-1)
     return image
+
+
+def imlistto3(array):
+    image = np.expand_dims(array, axis=3)
+    image = np.concatenate((image, image, image), axis=-1)
+    return image
+
+
+def changecolor(imgarray):
+    img = np.uint8(imgarray)  # 推理出来是浮点型，转整形
+    image = imageto3(img)
+    image[:, :, 0] = 0  # CV2是B,G,R格式
+    image[:, :, 1] = 0  # 只留下R即为红色
+    return image
+
+
+def findVOI(array):
+    '''
+    从三个方向分别切片，找到VOI
+    :param array: 三维ndarray
+    :return: 6个下标
+    '''
+    maxi = maxj = maxk = 0
+    mini = minj = mink = 0
+    # N方向
+    li = 0
+    ri = array.shape[0] - 1
+    while li < ri:
+        scliesli = array[li, ::]
+        scliesri = array[ri, ::]
+        if np.max(scliesli) > 0 and mini == 0:
+            mini = li
+        if np.max(scliesri) > 0 and maxi == 0:
+            maxi = ri
+        if not mini:
+            li += 1
+        if not maxi:
+            ri -= 1
+        if mini != 0 and maxi != 0:
+            break
+    # H方向
+    lj = 0
+    rj = array.shape[1] - 1
+    while lj < rj:
+        sclieslj = array[:, lj:, :]
+        scliesrj = array[:, rj:, :]
+        if minj == 0 and np.max(sclieslj) > 0:
+            minj = lj
+        if np.max(scliesrj) > 0 and maxj == 0:
+            maxj = rj
+        if not minj:
+            lj += 1
+        if not maxj:
+            rj -= 1
+        if minj != 0 and maxj != 0:
+            break
+    # W方向
+    lk = 0
+    rk = array.shape[2] - 1
+    while lk < rk:
+        sclieslk = array[::, lk]
+        scliesrk = array[::, rk]
+        if mink == 0 and np.max(sclieslk) > 0:
+            mink = lk
+        if maxk == 0 and np.max(scliesrk) > 0:
+            maxk = rk
+        if not mink:
+            lk += 1
+        if not maxk:
+            rk -= 1
+        if mink != 0 and maxk != 0:
+            break
+
+    return [(maxi, mini), (maxj, minj), (maxk, mink)]

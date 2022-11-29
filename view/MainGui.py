@@ -11,11 +11,13 @@ from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QStyle, QDialog, 
 # 主界面处理的逻辑
 from model.Base.BaseBuilder import BaseBuilder
 from model.Base.BasePostprocess import BasePostprocess
+from model.CT_Renal.RCCInfer import RCCInfer
 from threads.InferThread import InferThread
 from threads.ReadThread import ReadThread
 from ui.mainwindow import Ui_main
 from ui.version import Version
-from utils.ImageHelper import imageto3
+from utils.ImageHelper import imageto3, changecolor
+from utils.NiiHelper import readnii, mask_to_onehot
 from utils.tools import alertmsg, autopendata, autopenmodel, errormsg, savemasks, PIL2CV
 from view.selectGui import SelectGui
 
@@ -42,6 +44,8 @@ class MainGui(QMainWindow, Ui_main):
         self.readthread = ReadThread()  # 读取文件的线程
         self.inferthread = InferThread()  # 推理的线程
         self.builder = BaseBuilder()
+        self.version = Version()
+
         self.statinfo = QLabel(self)  # 状态条
 
         self.initActions()
@@ -59,6 +63,7 @@ class MainGui(QMainWindow, Ui_main):
         self.action_about.triggered.connect(self.openAbout)
         self.action_cancel_all.triggered.connect(self.resetall)
         self.action_save_result.triggered.connect(self.save_result)
+        self.actionopen_seg.triggered.connect(self.openseg)
         self.btn_predict.clicked.connect(self.predict)
         self.btn_save.clicked.connect(self.save_result)
         # ========= 样式设计 ===============
@@ -68,6 +73,7 @@ class MainGui(QMainWindow, Ui_main):
         self.action_about.setIcon(style.standardIcon(QStyle.SP_MessageBoxInformation))
         self.action_cancel_all.setIcon(style.standardIcon(QStyle.SP_MessageBoxCritical))
         self.action_save_result.setIcon(style.standardIcon(QStyle.SP_DialogSaveButton))
+        self.actionopen_seg.setIcon(style.standardIcon(QStyle.SP_DialogOpenButton))
         # self.btn_predict.setIcon(style.standardIcon(QStyle.SP_DialogOpenButton))
         # ============状态条设置==============
         self.statinfo.setText('当前未选择模型!')
@@ -104,9 +110,9 @@ class MainGui(QMainWindow, Ui_main):
         self.type_name = ""
         self.datapath = ""
         self.modelpath = ""
-        self.inferdata.clear()  # 推理结果
-        self.imgdata.clear()
-        self.imgps.clear()  # 像素间距
+        self.inferdata = []  # 推理结果
+        self.imgdata = []
+        self.imgps = []  # 像素间距
         self.start_time = 0  # 记录开始时间
         self.imgthick = 0  # 图像层厚
         self.imgcnt = 0  # 图像张数
@@ -116,11 +122,25 @@ class MainGui(QMainWindow, Ui_main):
         self.statinfo.setText('当前未选择模型!')
 
     def openAbout(self):
-        self.version = Version()
         self.version.show()
 
     def openSelect(self):
         self.qd.exec_()  # 直接打开窗口，阻塞式的
+
+    def openseg(self):
+        if len(self.datapath) > 0:
+            masks_path = autopendata(self, self.type_name)
+            if masks_path:
+                masks = readnii(masks_path)
+                onehotmasks = mask_to_onehot(masks, [[0], [1], [2]])  # 三分类，0背景 1kidney 2tumor
+                renalmask = onehotmasks[1].astype("uint8")  # 预测出来是float 需要转int
+                tumormask = onehotmasks[2].astype("uint8")  # 肿瘤mask
+                self.infer_callback(tumormask)
+                r = RCCInfer(self.datapath, self.modelpath)
+                vo = r.getothers([renalmask, tumormask])
+                self.infer_others(vo)
+        else:
+            self.printolog("未选择数据")
 
     def printolog(self, msg):
         t = "--" + time.asctime() + "--"
@@ -160,7 +180,8 @@ class MainGui(QMainWindow, Ui_main):
         if len(yuan) == len(mask):
             for idx in range(len(yuan)):
                 d = imageto3(yuan[idx])
-                p = mask[idx]
+                _, th3 = cv2.threshold(mask[idx], 0, 255, cv2.THRESH_BINARY)
+                p = changecolor(th3)  # 修改mask为红色
                 img = cv2.bitwise_or(d, p)
                 rets.append(img)
         if rets:
@@ -188,7 +209,7 @@ class MainGui(QMainWindow, Ui_main):
         self.imgps = ret[1][0]
         self.imgthick = ret[1][1]
         self.imgcnt = len(self.imgdata)
-        self.printolog("读取完成，共读取到{}个图像".format(self.imgcnt))
+        self.printolog("读取并自动调整窗位完成，共{}张图像".format(self.imgcnt))
         self.image_view.setImages(self.imgdata)  # 设置到缓存
         self.show_images(self.image_scene, self.image_view, 0)  # 展示第一张
         # 显示滚动条
@@ -203,7 +224,7 @@ class MainGui(QMainWindow, Ui_main):
         self.infer_view.setImages(self.inferdata)
         self.show_images(self.infer_scene, self.infer_view, 0)  # 展示第一张
 
-    def image_view_process(self, index):  # 传回来填入的index
+    def image_view_process(self, index: int):  # 传回来填入的index
         QtWidgets.QApplication.processEvents()
         precent = (index + 1) * (100 / self.imgcnt)  # 转化为百分比
         if precent < 100:
@@ -215,7 +236,6 @@ class MainGui(QMainWindow, Ui_main):
     def infer_process(self, step):  # 推理进度条
         QtWidgets.QApplication.processEvents()
         if step != 5:
-            self.progressBar.setValue(step * 20)
             self.progressBar.setFormat("第%s步处理中..." % step)
             self.progressBar.show()
         else:
@@ -254,6 +274,8 @@ class MainGui(QMainWindow, Ui_main):
             path = savemasks(self)
             if path:
                 self.printolog("开始保存数据，路径为：" + path)
-                # @todo 要用qt的方法保存
+                for i, item in enumerate(self.inferdata):
+                    name = "%03d" % i + ".png"
+                    cv2.imwrite(os.path.join(path, name), item)
             else:
                 self.printolog("未选择保存位置")

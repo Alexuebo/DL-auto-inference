@@ -4,16 +4,13 @@
 import cv2
 import numpy as np
 import torch
-from PIL import Image
 from torch.utils.data import DataLoader
 from torchvision import transforms
 
 from model.Base.BaseInfer import BaseInfer
 from model.CT_PNE.AttU_Net import AttU_Net
 from model.CT_PNE.PNEDataset import PNEDataset
-from threads.ReadThread import ReadThread
-from utils.ImageHelper import gaussion_filter, thres_filter, mask_extract, imageto3
-from utils.tools import PILlist2CV
+from utils.ImageHelper import thres_filter, mask_extract
 
 batchsize = 4
 
@@ -92,6 +89,7 @@ class PneInfer(BaseInfer):
         return retimg
 
     def postprocess(self, infermasks):
+        # mask空洞值填充
         retarray = []
         for mask in infermasks:
             # mask 二值化
@@ -108,16 +106,8 @@ class PneInfer(BaseInfer):
             im_floodfill_inv = cv2.bitwise_not(im_floodfill)
             # 把im_in、im_floodfill_inv这两幅图像结合起来得到前景
             im_out = mask.astype(int) | im_floodfill_inv.astype(int)
-            rgbarray = self.changecolor(im_out)
-            retarray.append(rgbarray)
+            retarray.append(im_out)
         return retarray
-
-    def changecolor(self, imgarray):
-        img = np.uint8(imgarray)  # 推理出来是浮点型，转整形
-        image = imageto3(img)
-        image[:, :, 0] = 0  # CV2是B,G,R格式
-        image[:, :, 1] = 0  # 只留下R即为红色
-        return image
 
     def getothers(self, masks):
         '''
@@ -135,4 +125,3 @@ class PneInfer(BaseInfer):
             volume += (notzero * self.imps[0] * self.imps[1] * self.thick)  # 求和
             # 把mask变成红色 255是白色
         return volume, (volume / self.feiyevol) * 100
-

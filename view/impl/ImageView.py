@@ -1,10 +1,12 @@
 import cv2
 from PyQt5 import QtGui, QtCore
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QPoint
 from PyQt5.QtGui import QPixmap, QImage
 from PyQt5.QtWidgets import QGraphicsView
 
 '''
+重写的QGraphicsView方法
+步骤：
 1.使用opencv 打开图片
 2.cv2转为QImage
 3.QImage转为QPixmap
@@ -34,7 +36,10 @@ class ImageView(QGraphicsView):
         self.setVerticalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
         self.setTransformationAnchor(self.AnchorUnderMouse)
+        self.left_click = False
         self.ctrl = False
+        self.end_pos = 0
+        self.start_pos = 0
 
     def setImages(self, imgs):
         # imgs是整个病人，一张张转化为RGB
@@ -53,26 +58,42 @@ class ImageView(QGraphicsView):
         if event.key() == Qt.Key_Control:
             self.ctrl = True
 
+    # 鼠标滚轮事件
     def wheelEvent(self, event: QtGui.QWheelEvent) -> None:
-        if self.ctrl:
-            #  放大缩小
-            self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
-            if event.angleDelta().y() > 0:
-                self.scale(1.1, 1.1)
+        if self.images:
+            if self.ctrl:
+                #  放大缩小
+                self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+                if event.angleDelta().y() > 0:
+                    self.scale(1.1, 1.1)
+                    self.__setDragEnabled(self.__isEnableDrag())
+                else:
+                    self.scale(1 / 1.1, 1 / 1.1)
+                    self.__setDragEnabled(self.__isEnableDrag())
             else:
-                self.scale(1 / 1.1, 1 / 1.1)
-            self.setTransformationAnchor(self.AnchorUnderMouse)
-        else:
-            # 滚动上下图片
-            if event.angleDelta().y() > 0:  # 上滚
-                if self.now == 0:
-                    return
-                else:
-                    self.now -= 1
-                    self.wheel.emit(self.now)
-            else:  # 下滚
-                if self.now == len(self.images) - 1:
-                    return
-                else:
-                    self.now += 1
-                    self.wheel.emit(self.now)
+                # 滚动上下图片
+                if event.angleDelta().y() > 0:  # 上滚
+                    if self.now == 0:
+                        return
+                    else:
+                        self.now -= 1
+                        self.wheel.emit(self.now)
+                else:  # 下滚
+                    if self.now == len(self.images) - 1:
+                        return
+                    else:
+                        self.now += 1
+                        self.wheel.emit(self.now)
+
+    # 图片的拖动
+
+    def __isEnableDrag(self):
+        """ 根据图片的尺寸决定是否启动拖拽功能 """
+        v = self.verticalScrollBar().maximum() > 0
+        h = self.horizontalScrollBar().maximum() > 0
+        return v or h
+
+    def __setDragEnabled(self, isEnabled: bool):
+        """ 设置拖拽是否启动 """
+        self.setDragMode(
+            self.ScrollHandDrag if isEnabled else self.NoDrag)

@@ -148,6 +148,7 @@
      <string>分割</string>
     </property>
     <addaction name="action_save_result"/>
+    <addaction name="actionopen_seg"/>
    </widget>
    <widget class="QMenu" name="menuhelp">
     <property name="title">
@@ -204,6 +205,11 @@
   <action name="action_about">
    <property name="text">
     <string>关于</string>
+   </property>
+  </action>
+  <action name="actionopen_seg">
+   <property name="text">
+    <string>打开分割结果</string>
    </property>
   </action>
  </widget>

@@ -7,7 +7,7 @@ from utils import tools
 from ui.select import Ui_select
 
 Model_Num = 6
-stylecss = "E:\Dev\Code\Pycharm\pred_QT\\resouces\css\pic.css"
+stylecss = "E:\\Dev\\Code\\Pycharm\\pred_QT\\resouces\\css\\pic.css"
 
 
 # 多继承方式构造ui
