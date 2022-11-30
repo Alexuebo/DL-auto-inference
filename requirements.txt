@@ -32,14 +32,14 @@ MedPy==0.4.0
 networkx==2.6.3
 nibabel==4.0.2
 -e git+https://devlper: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@github.com/Alexuebo/DL-auto-inference.git@70c6839a989d57f969a4a1aa8dafa7fd559a6543#egg=nnunet&subdirectory=nnunet
-numpy==1.21.6
+numpy>=1.21.6
 oauthlib==3.2.1
 opencv-python==4.6.0.66
 packaging==21.3
-pandas==1.3.5
+pandas>=1.3.5
 parso==0.8.3
 pickleshare==0.7.5
-Pillow==9.2.0
+Pillow>=9.2.0
 prompt-toolkit==3.0.31
 protobuf==3.19.5
 psutil==5.9.2
