@@ -1,8 +1,10 @@
 import cv2
 from PyQt5 import QtGui, QtCore
-from PyQt5.QtCore import Qt, QPoint
-from PyQt5.QtGui import QPixmap, QImage
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QImage
 from PyQt5.QtWidgets import QGraphicsView
+
+from utils.ImageHelper import imageto3
 
 '''
 重写的QGraphicsView方法
@@ -45,6 +47,8 @@ class ImageView(QGraphicsView):
         # imgs是整个病人，一张张转化为RGB
         for i, img in enumerate(imgs):
             self.process.emit(i)
+            if len(img.shape) <= 2:
+                img = imageto3(img)
             cvimg = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)  # 把opencv对象 默认BGR转为RGB
             y, x = cvimg.shape[:-1]
             frame = QImage(cvimg, x, y, QImage.Format_RGB888)

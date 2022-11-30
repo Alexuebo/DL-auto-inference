@@ -2,7 +2,6 @@ import os
 import time
 
 import cv2
-from PIL import Image
 from PyQt5 import QtWidgets
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
@@ -10,7 +9,6 @@ from PyQt5.QtWidgets import QMainWindow, QLabel, QApplication, QStyle, QDialog, 
 
 # 主界面处理的逻辑
 from model.Base.BaseBuilder import BaseBuilder
-from model.Base.BasePostprocess import BasePostprocess
 from model.CT_Renal.RCCInfer import RCCInfer
 from threads.InferThread import InferThread
 from threads.ReadThread import ReadThread
@@ -18,7 +16,7 @@ from ui.mainwindow import Ui_main
 from ui.version import Version
 from utils.ImageHelper import imageto3, changecolor
 from utils.NiiHelper import readnii, mask_to_onehot
-from utils.tools import alertmsg, autopendata, autopenmodel, errormsg, savemasks, PIL2CV
+from utils.tools import alertmsg, autopendata, autopenmodel, errormsg, savemasks, infomsg
 from view.selectGui import SelectGui
 
 
@@ -253,9 +251,9 @@ class MainGui(QMainWindow, Ui_main):
             self.readthread.start()
 
     def load_model(self):
-        if self.check_before_load("model"):
-            # 模型检查个路径就行，后面在读取
-            print("check model ok")
+        if self.check_before_load("model") and self.check_before_load("data"):
+            # 模型检查是否存在文件
+            infomsg("检查数据和模型完毕，可以开始推理！")
 
     def predict(self):
         if not self.type_name or not self.modelpath or len(self.imgdata) == 0:

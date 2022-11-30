@@ -132,6 +132,7 @@ def calcuateVR(tumormask, imps, thick):
                 maxlenth = max(maxlenth, w, h)
     volume = round(volume / 1000, 2)  # 体积转化为ml
     maxlenth = round(maxlenth * imps[0] / 10, 2)  # 单位*像素间距=mm 化成cm
+
     return volume, maxlenth
 
 

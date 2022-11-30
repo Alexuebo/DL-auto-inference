@@ -10,7 +10,7 @@ from torchvision import transforms
 from model.Base.BaseInfer import BaseInfer
 from model.CT_PNE.AttU_Net import AttU_Net
 from model.CT_PNE.PNEDataset import PNEDataset
-from utils.ImageHelper import thres_filter, mask_extract
+from utils.ImageHelper import thres_filter, mask_extract, imageto3, changecolor
 
 batchsize = 4
 
@@ -105,7 +105,8 @@ class PneInfer(BaseInfer):
             # 得到im_floodfill的逆im_floodfill_inv
             im_floodfill_inv = cv2.bitwise_not(im_floodfill)
             # 把im_in、im_floodfill_inv这两幅图像结合起来得到前景
-            im_out = mask.astype(int) | im_floodfill_inv.astype(int)
+            im = mask.astype(int) | im_floodfill_inv.astype(int)
+            im_out = changecolor(im)
             retarray.append(im_out)
         return retarray
 

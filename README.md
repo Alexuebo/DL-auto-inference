@@ -6,6 +6,11 @@
 
 1.安装必要的库 pip install -r requirements.txt
 
+注意，pytorch直接下可能和版本不匹配，在[这里看版本](https://download.pytorch.org/whl/torch_stable.html)
+
+我下载的是[torch1.12.1+cu116+py37](https://download.pytorch.org/whl/cu116/torch-1.12.1%2Bcu116-cp37-cp37m-win_amd64.whl
+)
+
 2.运行appMain.py
 
 #### 目前已集成训练模型：

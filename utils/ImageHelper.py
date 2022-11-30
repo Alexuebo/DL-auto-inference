@@ -59,6 +59,8 @@ def mask_extract(image):
 
 
 def imageto3(array):
+    if len(array.shape) == 3:
+        return array
     image = np.expand_dims(array, axis=2)
     image = np.concatenate((image, image, image), axis=-1)
     return image
